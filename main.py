@@ -1,3 +1,4 @@
+# IMPORTANT: Delete the local accounts.db file before running this cookie-based version.
 import asyncio
 import csv
 import getpass
@@ -74,6 +75,7 @@ async def main() -> None:
     scraper_email = input("Scraper email: ").strip()
     scraper_email_password = getpass.getpass("Scraper email password: ").strip()
     print("-" * 40)
+    my_cookies = 'auth_token=YOUR_AUTH_TOKEN; ct0=YOUR_CT0'
 
     # Add and log in the scraper account
     await api.pool.add_account(
@@ -81,6 +83,7 @@ async def main() -> None:
         scraper_password,
         scraper_email,
         scraper_email_password,
+        cookies=my_cookies,
     )
     await api.pool.login_all(usernames=[scraper_username])
 
