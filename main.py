@@ -1,7 +1,6 @@
 # IMPORTANT: Delete the local accounts.db file before running this cookie-based version.
 import asyncio
 import csv
-import getpass
 import re
 from twscrape import API
 
@@ -16,12 +15,8 @@ async def scrape_user_tweets(api: API, username: str, keyword: str) -> None:
 
     def write_tweet_row(writer: csv.writer, tweet) -> None:
         writer.writerow([
-            tweet.id,
-            tweet.date,
             tweet.user.username,
             tweet.rawContent,
-            tweet.likeCount,
-            tweet.retweetCount
         ])
 
     # Open the CSV file and set up the writer
@@ -29,7 +24,7 @@ async def scrape_user_tweets(api: API, username: str, keyword: str) -> None:
         writer = csv.writer(file)
 
         # Write the header row
-        writer.writerow(["Tweet ID", "Date", "Author", "Text", "Likes", "Retweets"])
+        writer.writerow(["Author", "Text"])
 
         print(f"Scraping tweets for: {query}...")
 
@@ -69,20 +64,17 @@ async def main() -> None:
     api = API("accounts.db", raise_when_no_account=True)
 
     print("-" * 40)
-    print("Enter your X account details used for scraping login.")
+    print("Enter the X username tied to your session cookies.")
     scraper_username = input("Scraper X username (without @): ").strip()
-    scraper_password = getpass.getpass("Scraper X password: ").strip()
-    scraper_email = input("Scraper email: ").strip()
-    scraper_email_password = getpass.getpass("Scraper email password: ").strip()
     print("-" * 40)
-    my_cookies = 'auth_token=YOUR_AUTH_TOKEN; ct0=YOUR_CT0'
+    my_cookies = 'auth_token=87ffe92e24c7d9ba96aecde463ed2c32109f00c6; ct0=948ec1806a0ec8ec8afad20b4d7a6de07d7935c63381d05bf07bc756a91f7ed612ea258ad4bbd397ac5cf67b0da1a81ba6fff5da3488d641e349a61ea833c46e5069dfc6f49ac40aa66e4b54f401c792'
 
     # Add and log in the scraper account
     await api.pool.add_account(
         scraper_username,
-        scraper_password,
-        scraper_email,
-        scraper_email_password,
+        "",  # Password not needed with cookies
+        "",  # Email not needed with cookies
+        "",  # Email password not needed with cookies
         cookies=my_cookies,
     )
     await api.pool.login_all(usernames=[scraper_username])
